@@ -20,8 +20,8 @@ export default function ConverterForm() {
       const res = await fetch("/api/convert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ from, to, amount }) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setResult(await res.json());
-    } catch (err: any) {
-      setError(err.message || "Error");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error");
     } finally { setLoading(false); }
   }
 
