@@ -10,16 +10,40 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { from, to, amount } = schema.parse(body);
-  const fx = await fetchFxRate(from, to);
-  const converted = roundAmount(new Decimal(amount).times(fx.rate), to);
-  return Response.json({
-    rate: fx.rate,
-    asOf: fx.asOf,
-    source: fx.source,
-    stale: fx.stale,
-    amount,
-    converted,
-  });
+  try {
+    const body = await req.json();
+    const { from, to, amount } = schema.parse(body);
+    
+    console.log(`[API] Convert request: ${amount} ${from} -> ${to}`);
+    
+    const fx = await fetchFxRate(from, to);
+    const converted = roundAmount(new Decimal(amount).times(fx.rate), to);
+    
+    const response = {
+      rate: fx.rate,
+      asOf: fx.asOf,
+      source: fx.source,
+      stale: fx.stale,
+      amount,
+      converted,
+    };
+    
+    console.log(`[API] Convert response: ${JSON.stringify(response)}`);
+    return Response.json(response);
+    
+  } catch (error) {
+    console.error(`[API] Convert error:`, error);
+    
+    if (error instanceof z.ZodError) {
+      return Response.json(
+        { error: "Invalid input", details: error.issues },
+        { status: 400 }
+      );
+    }
+    
+    return Response.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
