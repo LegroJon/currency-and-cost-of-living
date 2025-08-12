@@ -10,9 +10,15 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  let from: string | undefined;
+  let to: string | undefined;
+  
   try {
     const body = await req.json();
-    const { from, to, amount } = schema.parse(body);
+    const parsed = schema.parse(body);
+    from = parsed.from;
+    to = parsed.to;
+    const { amount } = parsed;
     
     console.log(`[API] Convert request: ${amount} ${from} -> ${to}`);
     
@@ -41,9 +47,25 @@ export async function POST(req: NextRequest) {
       );
     }
     
+    // Check for unsupported currency pair errors
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes('All providers failed') || 
+        errorMessage.includes('missing rate') || 
+        errorMessage.includes('not found')) {
+      return Response.json(
+        { 
+          error: "Unsupported currency pair or providers unavailable", 
+          details: from && to ? { from, to } : undefined,
+          message: errorMessage
+        },
+        { status: 400 }
+      );
+    }
+    
+    // All other errors are provider/network issues
     return Response.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: "Provider error", message: errorMessage },
+      { status: 502 }
     );
   }
 }

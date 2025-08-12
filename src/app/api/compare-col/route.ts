@@ -13,9 +13,19 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  let fromCurrency: string | undefined;
+  let toCurrency: string | undefined;
+  let fromCountry: string | undefined;
+  let toCountry: string | undefined;
+  
   try {
     const body = await req.json();
-    const { fromCurrency, toCurrency, fromCountry, toCountry, amount } = schema.parse(body);
+    const parsed = schema.parse(body);
+    fromCurrency = parsed.fromCurrency;
+    toCurrency = parsed.toCurrency;
+    fromCountry = parsed.fromCountry;
+    toCountry = parsed.toCountry;
+    const { amount } = parsed;
     
     console.log(`[API] Compare-CoL request: ${amount} ${fromCurrency} (${fromCountry}) -> ${toCurrency} (${toCountry})`);
     
@@ -58,9 +68,30 @@ export async function POST(req: NextRequest) {
       );
     }
     
+    // Check for unsupported currency pair or country errors
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes('All providers failed') || 
+        errorMessage.includes('missing rate') || 
+        errorMessage.includes('not found') ||
+        errorMessage.includes('Country not found') ||
+        errorMessage.includes('PPP data unavailable')) {
+      return Response.json(
+        { 
+          error: "Unsupported currency pair or country code", 
+          details: {
+            currencies: fromCurrency && toCurrency ? { from: fromCurrency, to: toCurrency } : undefined,
+            countries: fromCountry && toCountry ? { from: fromCountry, to: toCountry } : undefined
+          },
+          message: errorMessage
+        },
+        { status: 400 }
+      );
+    }
+    
+    // All other errors are provider/network issues
     return Response.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: "Provider error", message: errorMessage },
+      { status: 502 }
     );
   }
 }
