@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import CurrencySelector from "./CurrencySelector";
 
 interface ConvertResponse {
   rate: number; asOf: string; source: string; stale: boolean; amount: number; converted: number;
@@ -19,10 +18,7 @@ export default function ConverterForm() {
     setLoading(true); setError(null);
     try {
       const res = await fetch("/api/convert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ from, to, amount }) });
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setResult(await res.json());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
@@ -30,72 +26,22 @@ export default function ConverterForm() {
   }
 
   return (
-    <div className="space-y-4 border p-6 rounded-lg bg-slate-50">
-      <h3 className="text-lg font-semibold text-gray-900">Currency Converter</h3>
-      
-      <form onSubmit={submit} className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4 items-end">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
-            <CurrencySelector value={from} onChange={setFrom} />
-          </div>
-          
-          <div className="flex-shrink-0 pb-2">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </div>
-          
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
-            <CurrencySelector value={to} onChange={setTo} />
-          </div>
-          
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-            <input 
-              className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
-              type="number" 
-              value={amount} 
-              onChange={e=>setAmount(Number(e.target.value))} 
-              min="0.01"
-              step="0.01"
-            />
-          </div>
-          
-          <button 
-            disabled={loading || !from || !to} 
-            className="px-6 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-          >
-            {loading ? "Converting..." : "Convert"}
-          </button>
-        </div>
-      </form>
-      
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-red-600 text-sm font-medium">Error</p>
-          <p className="text-red-600 text-sm">{error}</p>
-        </div>
-      )}
-      
+    <form onSubmit={submit} className="space-y-4 border p-4 rounded-md bg-slate-50">
+      <div className="flex gap-2">
+        <input className="border px-2 py-1 rounded w-20" value={from} onChange={e=>setFrom(e.target.value.toUpperCase())} />
+        <span>→</span>
+        <input className="border px-2 py-1 rounded w-20" value={to} onChange={e=>setTo(e.target.value.toUpperCase())} />
+        <input className="border px-2 py-1 rounded w-32" type="number" value={amount} onChange={e=>setAmount(Number(e.target.value))} />
+        <button disabled={loading} className="bg-blue-600 text-white px-3 py-1 rounded disabled:opacity-50">{loading?"...":"Convert"}</button>
+      </div>
+      {error && <p className="text-red-600 text-sm">{error}</p>}
       {result && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="text-green-800 font-medium">Conversion Result</h4>
-            {result.stale && (
-              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded">Stale Data</span>
-            )}
-          </div>
-          <div className="text-2xl font-bold text-green-800 mb-2">
-            {amount} {from} = {result.converted} {to}
-          </div>
-          <div className="text-sm text-green-700 space-y-1">
-            <div>Exchange Rate: 1 {from} = {result.rate.toFixed(6)} {to}</div>
-            <div>Source: {result.source} • As of: {result.asOf}</div>
-          </div>
+        <div className="text-sm">
+          <div><strong>Rate:</strong> {result.rate} ({result.source}) {result.stale && <span className="text-amber-600">stale</span>}</div>
+          <div><strong>As Of:</strong> {result.asOf}</div>
+          <div><strong>Converted:</strong> {result.converted}</div>
         </div>
       )}
-    </div>
+    </form>
   );
 }

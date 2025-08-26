@@ -8,20 +8,6 @@ const iso3Schema = z.string().length(3).toUpperCase();
 const cache = new Map<string, { result: PPPResult; expires: number }>();
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
-function logPPPTransaction(data: {
-  country: string;
-  year: number;
-  value: number;
-  cached: boolean;
-}) {
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    type: "PPP_DATA",
-    ...data
-  };
-  console.log(`[PPP] ${JSON.stringify(logEntry)}`);
-}
-
 async function fetchWorldBank(countryIso3: string): Promise<PPPResult> {
   const url = `https://api.worldbank.org/v2/country/${countryIso3}/indicator/PA.NUS.PPPC.RF?format=json&per_page=60`;
   const res = await fetch(url, { cache: "no-store" });
@@ -41,27 +27,9 @@ export async function getPPP(countryIso3: string): Promise<PPPResult> {
   const key = `ppp:${iso3}`;
   const now = Date.now();
   const cached = cache.get(key);
-  
-  if (cached && cached.expires > now) {
-    logPPPTransaction({
-      country: iso3,
-      year: cached.result.year,
-      value: cached.result.value,
-      cached: true
-    });
-    return cached.result;
-  }
-  
+  if (cached && cached.expires > now) return cached.result;
   const result = await fetchWorldBank(iso3);
   cache.set(key, { result, expires: now + THIRTY_DAYS_MS });
-  
-  logPPPTransaction({
-    country: iso3,
-    year: result.year,
-    value: result.value,
-    cached: false
-  });
-  
   return result;
 }
 
