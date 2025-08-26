@@ -31,7 +31,28 @@ export default function ConverterForm() {
 
   return (
     <div className="space-y-4 border p-6 rounded-lg bg-slate-50">
-      <h3 className="text-lg font-semibold text-gray-900">Currency Converter</h3>
+      <h3 className="text-lg font-semibold text-gray-900 text-center">Currency Converter</h3>
+      
+      {/* Quick Amount Buttons */}
+      <div className="space-y-2 text-center">
+        <label className="block text-sm font-medium text-gray-700">Quick Amounts</label>
+        <div className="flex flex-wrap gap-2 justify-center">
+          {[1, 5, 10, 100, 1000, 10000, 100000].map((quickAmount) => (
+            <button
+              key={quickAmount}
+              type="button"
+              onClick={() => setAmount(quickAmount)}
+              className={`px-3 py-1 text-sm rounded border transition-colors ${
+                amount === quickAmount
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              {quickAmount >= 1000 ? `${quickAmount / 1000}k` : quickAmount.toString()}
+            </button>
+          ))}
+        </div>
+      </div>
       
       <form onSubmit={submit} className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-4 items-end">
