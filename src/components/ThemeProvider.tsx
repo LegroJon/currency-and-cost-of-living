@@ -20,23 +20,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
     const savedTheme = localStorage.getItem("theme") as Theme;
-    if (savedTheme) {
+    if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
       setTheme(savedTheme);
     } else {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      setTheme(systemTheme);
+      // Default to light mode instead of system preference
+      setTheme("light");
     }
   }, []);
 
   useEffect(() => {
     if (mounted) {
       localStorage.setItem("theme", theme);
-      document.documentElement.classList.toggle("dark", theme === "dark");
+      if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     }
   }, [theme, mounted]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === "light" ? "dark" : "light");
+    setTheme(prev => {
+      const newTheme = prev === "light" ? "dark" : "light";
+      console.log(`Theme toggled from ${prev} to ${newTheme}`);
+      return newTheme;
+    });
   };
 
   if (!mounted) {
