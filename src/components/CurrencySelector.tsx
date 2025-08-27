@@ -46,34 +46,34 @@ export default function CurrencySelector({ value, onChange, placeholder = "Selec
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full border px-3 py-2 rounded text-left bg-white hover:bg-gray-50 flex items-center justify-between min-w-[140px]"
+        className="w-full border px-3 py-2 rounded text-left bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 flex items-center justify-between min-w-[140px]"
       >
         <div className="flex items-center">
           {selectedCurrency ? (
             <>
-              <span className="font-mono font-medium text-blue-600">{selectedCurrency.code}</span>
-              <span className="ml-2 text-gray-600 truncate">{selectedCurrency.symbol}</span>
+              <span className="font-mono font-medium text-blue-600 dark:text-blue-400">{selectedCurrency.code}</span>
+              <span className="ml-2 text-gray-600 dark:text-gray-400 truncate">{selectedCurrency.symbol}</span>
             </>
           ) : (
-            <span className="text-gray-400">{placeholder}</span>
+            <span className="text-gray-400 dark:text-gray-500">{placeholder}</span>
           )}
         </div>
-        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-4 w-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-50 w-80 mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
+        <div className="absolute z-50 w-80 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg">
           {/* Search Input */}
-          <div className="p-2 border-b">
+          <div className="p-2 border-b border-gray-200 dark:border-gray-700">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search currencies..."
-              className="w-full px-3 py-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
             />
           </div>
@@ -86,21 +86,21 @@ export default function CurrencySelector({ value, onChange, placeholder = "Selec
                   key={currency.code}
                   type="button"
                   onClick={() => selectCurrency(currency)}
-                  className="w-full px-3 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none flex items-center justify-between"
+                  className="w-full px-3 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:bg-blue-50 dark:focus:bg-blue-900/30 focus:outline-none flex items-center justify-between text-gray-900 dark:text-gray-100"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center">
-                      <span className="font-mono font-medium text-blue-600 mr-2">{currency.code}</span>
-                      <span className="text-gray-600 mr-2">{currency.symbol}</span>
+                      <span className="font-mono font-medium text-blue-600 dark:text-blue-400 mr-2">{currency.code}</span>
+                      <span className="text-gray-600 dark:text-gray-400 mr-2">{currency.symbol}</span>
                     </div>
-                    <div className="text-sm text-gray-500 truncate">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
                       {currency.name} • {currency.country}
                     </div>
                   </div>
                 </button>
               ))
             ) : (
-              <div className="px-3 py-2 text-gray-500 text-sm">
+              <div className="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">
                 No currencies found
               </div>
             )}
