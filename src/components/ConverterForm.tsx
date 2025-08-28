@@ -30,12 +30,12 @@ export default function ConverterForm() {
   }
 
   return (
-    <div className="space-y-4 border p-6 rounded-lg bg-slate-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 text-center">Currency Converter</h3>
+    <div className="space-y-4 border p-6 rounded-lg bg-gray-800 border-gray-700">
+      <h3 className="text-lg font-semibold text-gray-100 text-center">Currency Converter</h3>
       
       {/* Quick Amount Buttons */}
       <div className="space-y-2 text-center">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Quick Amounts</label>
+        <label className="block text-sm font-medium text-gray-300">Quick Amounts</label>
         <div className="flex flex-wrap gap-2 justify-center">
           {[1, 5, 10, 100, 1000, 10000, 100000].map((quickAmount) => (
             <button
@@ -45,7 +45,7 @@ export default function ConverterForm() {
               className={`px-3 py-1 text-sm rounded border transition-colors ${
                 amount === quickAmount
                   ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
               }`}
             >
               {quickAmount >= 1000 ? `${quickAmount / 1000}k` : quickAmount.toString()}
@@ -57,25 +57,25 @@ export default function ConverterForm() {
       <form onSubmit={submit} className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-4 items-end">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">From</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">From</label>
             <CurrencySelector value={from} onChange={setFrom} />
           </div>
           
           <div className="flex-shrink-0 pb-2">
-            <svg className="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </div>
           
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">To</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">To</label>
             <CurrencySelector value={to} onChange={setTo} />
           </div>
           
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Amount</label>
             <input 
-              className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600" 
+              className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 border-gray-600" 
               type="number" 
               value={amount} 
               onChange={e=>setAmount(Number(e.target.value))} 
@@ -94,24 +94,24 @@ export default function ConverterForm() {
       </form>
       
       {error && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-          <p className="text-red-600 dark:text-red-400 text-sm font-medium">Error</p>
-          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+        <div className="p-3 bg-red-900/20 border border-red-800 rounded-md">
+          <p className="text-red-400 text-sm font-medium">Error</p>
+          <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
       
       {result && (
-        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+        <div className="p-4 bg-green-900/20 border border-green-800 rounded-md">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-green-800 dark:text-green-400 font-medium">Conversion Result</h4>
+            <h4 className="text-green-400 font-medium">Conversion Result</h4>
             {result.stale && (
-              <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-1 rounded">Stale Data</span>
+              <span className="text-xs bg-amber-900/30 text-amber-300 px-2 py-1 rounded">Stale Data</span>
             )}
           </div>
-          <div className="text-2xl font-bold text-green-800 dark:text-green-400 mb-2">
+          <div className="text-2xl font-bold text-green-400 mb-2">
             {amount} {from} = {result.converted} {to}
           </div>
-          <div className="text-sm text-green-700 dark:text-green-300 space-y-1">
+          <div className="text-sm text-green-300 space-y-1">
             <div>Exchange Rate: 1 {from} = {result.rate.toFixed(6)} {to}</div>
             <div>Source: {result.source} • As of: {result.asOf}</div>
           </div>
