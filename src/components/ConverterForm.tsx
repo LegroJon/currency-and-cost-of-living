@@ -14,6 +14,14 @@ export default function ConverterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const switchCurrencies = () => {
+    setFrom(to);
+    setTo(from);
+    // Clear previous result when switching currencies
+    setResult(null);
+    setError(null);
+  };
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError(null);
@@ -62,9 +70,22 @@ export default function ConverterForm() {
           </div>
           
           <div className="flex-shrink-0 pb-2">
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
+            <button
+              type="button"
+              onClick={switchCurrencies}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 
+                         shadow-lg transition-colors duration-200 border-2 border-gray-800"
+              title="Switch currencies"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m0-4l-4-4"
+                />
+              </svg>
+            </button>
           </div>
           
           <div className="flex-1">
